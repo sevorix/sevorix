@@ -21,4 +21,4 @@ Upgrade for Team Sync, Audit Logs, and the "Jury of Rivals."
 ---
 
 ##### Contact
-📧 support@sevorix.com
+📧 support@sevorix.ai
