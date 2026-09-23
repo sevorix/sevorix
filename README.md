@@ -241,12 +241,50 @@ a compromised agent running as you can write to.
 | `/usr/local/lib/sevorix/sevorix-ebpf-daemon` | Kernel-level syscall tracing | `root:root` |
 | `/usr/local/bin/sevorix-cgroup-helper` | Per-session process containment | `root:root` |
 | `/usr/local/bin/sevorix-agent-launcher` | Privileged agent sandbox launcher | `root:root` |
+| `/usr/local/bin/sevorix-agent-wrap` | Puts a launched agent's process tree in a Sevorix cgroup | `root:root` |
 | `/etc/sudoers.d/sevorix-*` | Passwordless invocation of the helpers above | `root:root` |
+| `/usr/local/share/ca-certificates/sevorix-mitm.crt` | TLS interception CA, only if you enable TLS inspection and accept trusting it | `root:root` |
+| `/etc/sysctl.d/60-sevorix-userns.conf` | Re-enables unprivileged user namespaces on Ubuntu 24.04+, only if you accept it | `root:root` |
 | `~/.sevorix/policies`, `~/.sevorix/roles` | Your policy and role definitions | you |
 | `~/.local/state/sevorix/` | PID files and session metadata | you |
 
 Every prompt is optional and the installer tells you what is lost by declining.
 Run `./install-binary.sh --force` to accept all of them non-interactively.
+
+---
+
+## 🗑️ Uninstall
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/sevorix/sevorix/main/uninstall.sh | bash
+```
+
+It lists everything it will remove and everything it will keep, asks once, and
+then asks for `sudo`. It stops the daemon, then removes the following:
+
+- the passwordless sudoers rules
+- the root-owned binaries
+- the sevorix binary
+- the TLS interception CA. It takes the CA out of the system trust store, then
+  checks that it is really gone before deleting its key.
+- the userns sysctl drop-in. The running kernel keeps its current value until
+  you reboot, and the script tells you so.
+- Claude Code's MCP config rewrite, which it restores from its backup
+
+**Your own configuration stays** unless you ask for it to go. That covers
+`~/.sevorix` (policies, roles, settings, hooks, logs, receipts, Hub
+credentials), `~/.config/sevorix`, and hooks you promoted into
+`/usr/local/lib/sevorix/hooks`. To delete those too:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/sevorix/sevorix/main/uninstall.sh | bash -s -- --purge
+```
+
+`--yes` skips the confirmation (required without a terminal), and `--dry-run`
+shows what would happen. If anything cannot be removed, the summary names it
+with the command to finish the job, and the script exits non-zero. The script is
+[`uninstall.sh`](https://github.com/sevorix/sevorix/blob/main/uninstall.sh) in
+this repository.
 
 ---
 
