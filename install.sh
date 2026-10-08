@@ -20,7 +20,7 @@
 
 set -euo pipefail
 
-SEVORIX_INSTALLER_VERSION="1"
+SEVORIX_INSTALLER_VERSION="2"
 
 # Overridable for internal mirrors and for the test harness. Both are announced
 # when set: this script chooses where a binary that will be granted passwordless
@@ -99,16 +99,34 @@ if [ "$(id -u)" -eq 0 ]; then
 fi
 
 # ---------------------------------------------------------------
-# Platform check — only linux/x86_64 is published.
+# Platform check — this script installs the linux/x86_64 build only.
+#
+# Apple Silicon Macs have their own installer, install-macos.sh, kept as a
+# separate file rather than a branch here so that each one-liner runs exactly
+# one platform's code path. It is only named, never fetched or exec'd from
+# here: this script chooses which installer a user runs, and that choice stays
+# visible in the command they typed.
 # ---------------------------------------------------------------
 OS="$(uname -s)"
 ARCH="$(uname -m)"
+#
+# Every Darwin is sent there, not just arm64: a shell under Rosetta on an Apple
+# Silicon Mac reports x86_64, and install-macos.sh is what tells that case
+# apart from a genuine Intel Mac (which it refers to Sevorix Lite).
+if [ "$OS" = "Darwin" ]; then
+    fail "This is the Linux installer (found: $OS $ARCH). On a Mac with Apple Silicon, use install-macos.sh:" \
+         "" \
+         "  curl -fsSL https://raw.githubusercontent.com/$REPO/main/install-macos.sh | bash" \
+         "" \
+         "Intel Macs are not supported by Sevorix Pro; the open-source Sevorix Lite" \
+         "edition builds from source: https://github.com/sevorix/sevorix-lite"
+fi
 if [ "$OS" != "Linux" ] || [ "$ARCH" != "x86_64" ]; then
-    fail "Sevorix Pro is published for Linux x86_64 only (found: $OS $ARCH)." \
+    fail "Sevorix Pro is published for Linux x86_64 and Apple Silicon macOS only (found: $OS $ARCH)." \
          "Linux on WSL2 is supported and reports as Linux x86_64." \
          "" \
-         "For macOS, or for a non-x86_64 machine, the open-source Sevorix Lite" \
-         "edition builds from source and ships darwin binaries:" \
+         "For any other machine, the open-source Sevorix Lite" \
+         "edition builds from source:" \
          "  https://github.com/sevorix/sevorix-lite"
 fi
 
