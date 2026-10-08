@@ -133,7 +133,7 @@ sevorix start
 sevorix status
 ```
 
-### 5. Open the Observatory
+### 5. Open the Watchtower Dashboard
 
 `sevorix start` prints a session token. Open your local command center:
 
@@ -148,7 +148,7 @@ If you lose the token, `sevorix status` prints it again.
 Don't trust us. Test it. `sevsh` is a secure shell wrapper that routes commands
 through the Sevorix engine before they ever reach the processor.
 
-Leave the Observatory open in a browser and run these in your terminal:
+Leave the dashboard open in a browser and run these in your terminal:
 
 ### Scenario 1 — The Green Lane (allowed)
 
@@ -177,7 +177,7 @@ review.
 sevsh -c "SELECT * FROM admin_credentials;"
 ```
 
-**Result:** the terminal hangs. Switch to the Observatory — a Yellow intervention
+**Result:** the terminal hangs. Switch to the dashboard — a Yellow intervention
 panel is waiting with a countdown. Click **Block** or **Allow** to decide. While
 the review is open, the rest of the agent's process tree is frozen, so nothing
 else runs behind your back while you think.
@@ -198,7 +198,7 @@ else runs behind your back while you think.
 |---|---|---|
 | Shell, network and syscall enforcement | ✅ | ✅ |
 | `sevsh`, seccomp interception, agent sandboxing | ✅ | ✅ |
-| The Observatory and live traffic feed | ✅ | ✅ |
+| Watchtower dashboard and live traffic feed | ✅ | ✅ |
 | **Jury of Rivals** — ambiguous actions adjudicated by multiple LLMs in consensus | — | ✅ |
 | **Prompt-injection classifier** — ML scoring of outbound and inbound content | — | ✅ |
 | **Built-in self-protection policies** — controls an agent cannot disable | — | ✅ |
